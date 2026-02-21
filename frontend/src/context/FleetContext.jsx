@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
 const FleetContext = createContext(undefined)
 
 export function FleetProvider({ children }) {
@@ -15,7 +16,7 @@ export function FleetProvider({ children }) {
     try {
       setLoading(true)
       setError(null)
-      const res = await fetch('/api/state')
+      const res = await fetch(`${API_BASE}/api/state`)
       if (!res.ok) {
         throw new Error('Unable to load fleet state.')
       }
@@ -37,7 +38,7 @@ export function FleetProvider({ children }) {
   }, [])
 
   async function addVehicle(v) {
-    const res = await fetch('/api/vehicles', {
+    const res = await fetch(`${API_BASE}/api/vehicles`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(v),
@@ -54,7 +55,7 @@ export function FleetProvider({ children }) {
   }
 
   async function toggleVehicleInShop(vehicleId) {
-    const res = await fetch(`/api/vehicles/${vehicleId}/toggle-shop`, {
+    const res = await fetch(`${API_BASE}/api/vehicles/${vehicleId}/toggle-shop`, {
       method: 'POST',
     })
     if (!res.ok) {
@@ -69,7 +70,7 @@ export function FleetProvider({ children }) {
   }
 
   async function createTrip(input) {
-    const res = await fetch('/api/trips', {
+    const res = await fetch(`${API_BASE}/api/trips`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(input),
@@ -95,7 +96,7 @@ export function FleetProvider({ children }) {
   }
 
   async function completeTrip(tripId) {
-    const res = await fetch(`/api/trips/${tripId}/complete`, {
+    const res = await fetch(`${API_BASE}/api/trips/${tripId}/complete`, {
       method: 'POST',
     })
     if (!res.ok) {
@@ -110,7 +111,7 @@ export function FleetProvider({ children }) {
   }
 
   async function addMaintenance(m) {
-    const res = await fetch('/api/maintenances', {
+    const res = await fetch(`${API_BASE}/api/maintenances`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(m),
@@ -127,7 +128,7 @@ export function FleetProvider({ children }) {
   }
 
   async function addExpense(e) {
-    const res = await fetch('/api/expenses', {
+    const res = await fetch(`${API_BASE}/api/expenses`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(e),

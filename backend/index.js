@@ -16,15 +16,13 @@ const {
   DB_NAME = 'fleetflow',
 } = process.env
 
-const pool = mysql
-  .createPool({
-    host: DB_HOST,
-    port: DB_PORT,
-    user: DB_USER,
-    password: DB_PASSWORD,
-    database: DB_NAME,
-  })
-  .promise()
+const pool = mysql.createPool({
+  host: DB_HOST,
+  port: DB_PORT,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  database: DB_NAME,
+}).promise()
 
 app.use(cors({ origin: 'http://localhost:5173', credentials: false }))
 app.use(express.json())

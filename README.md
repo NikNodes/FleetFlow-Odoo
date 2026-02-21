@@ -1,4 +1,4 @@
-## FleetFlow – Fleet Management Command Center
+## 🚚 FleetFlow – Fleet Management Command Center
 
 FleetFlow is a full‑stack fleet management prototype built for learning and experimentation.  
 It simulates a modern SaaS command center for logistics teams, with role‑based access, real‑time fleet state, and MySQL‑backed persistence.
@@ -9,27 +9,27 @@ The project is split into:
 
 ---
 
-### Features Overview
+### ✨ Features Overview
 
-- **Authentication**
+- **🔐 Authentication**
   - Email + password login
   - Simple registration with role selection:
-    - Fleet Manager
-    - Dispatcher
-    - Safety Officer
-    - Financial Analyst
+    - 👨‍✈️ Fleet Manager
+    - 📦 Dispatcher
+    - 🛡️ Safety Officer
+    - 📊 Financial Analyst
   - Demo seeded user:
     - Email: `fleet.manager@company.com`
     - Password: `password`
 
-- **Role‑Based Access Control**
+- **🧩 Role‑Based Access Control**
   - Fleet Manager: full access to all modules
   - Dispatcher: Dashboard, Vehicles, Dispatch
   - Safety Officer: Dashboard, Vehicles, Drivers
   - Financial Analyst: Dashboard, Vehicles, Analytics
   - Both sidebar navigation and main content respect role permissions
 
-- **Dashboard (Command Center)**
+- **📊 Dashboard (Command Center)**
   - KPI cards:
     - Active Fleet (On Trip)
     - Maintenance Alerts (In Shop)
@@ -37,7 +37,7 @@ The project is split into:
     - Pending Cargo (Dispatched trips)
   - Animated truck hero in header for a more “live” SaaS feel
 
-- **Vehicle Registry**
+- **🚛 Vehicle Registry**
   - Table of all vehicles:
     - Plate, Model, Capacity, Odometer, Status
   - Status badges:
@@ -47,7 +47,7 @@ The project is split into:
   - “Mark In Shop / Set Available” action
   - “Add Vehicle” modal form
 
-- **Trip Dispatcher**
+- **🛰️ Trip Dispatcher**
   - Dispatch form:
     - Select vehicle (only Available)
     - Select driver (only Available)
@@ -65,13 +65,13 @@ The project is split into:
     - Vehicle status → `Available` (unless kept In Shop)
     - Driver status → `Available`
 
-- **Maintenance**
+- **🛠️ Maintenance**
   - Log maintenance for a vehicle:
     - Date, description, cost
   - Automatically sets vehicle status to `In Shop`
   - Table showing all maintenance logs
 
-- **Drivers & Safety**
+- **👥 Drivers & Safety**
   - Table of drivers:
     - Name
     - License status (Valid / Expired)
@@ -79,7 +79,7 @@ The project is split into:
     - Safety score
   - Expired licenses highlighted via red badge
 
-- **Analytics & Finance**
+- **📈 Analytics & Finance**
   - Fuel expenses capture:
     - Vehicle, Fuel liters, Fuel cost
   - Derived metrics:
@@ -92,27 +92,27 @@ The project is split into:
 
 ---
 
-### Tech Stack
+### 🛠 Tech Stack
 
-- **Frontend**
+- **🖥 Frontend**
   - React 18
   - Vite
   - `lucide-react` for icons
   - Custom CSS (no CSS framework), designed as a light, airy SaaS UI with micro‑animations
 
-- **Backend**
+- **🧩 Backend**
   - Node.js + Express
   - `mysql2` (promise API)
   - `dotenv` for environment configuration
   - `cors` for local development
 
-- **Database**
+- **🗄 Database**
   - MySQL (tested with a local instance)
   - Database name: `fleetflow` (configurable via `.env`)
 
 ---
 
-### Project Structure
+### 📁 Project Structure
 
 ```text
 Odoo-Try/
@@ -144,7 +144,7 @@ Odoo-Try/
 
 ---
 
-### Backend: Setup and Configuration
+### ⚙️ Backend: Setup and Configuration
 
 1. **Install dependencies**
 
@@ -201,7 +201,7 @@ npm run dev
 
 ---
 
-### Frontend: Setup and Run
+### 💻 Frontend: Setup and Run
 
 1. **Install dependencies**
 
@@ -233,7 +233,7 @@ npm run preview
 
 ---
 
-### How Frontend and Backend Talk
+### 🔗 How Frontend and Backend Talk
 
 - The frontend uses `fetch` calls inside `FleetContext.jsx` to talk to the backend.
 - Endpoints include (non‑exhaustive):
@@ -250,7 +250,7 @@ npm run preview
 
 ---
 
-### Business Rules Summary
+### 📐 Business Rules Summary
 
 - Trips:
   - Cannot dispatch if:
@@ -277,7 +277,7 @@ npm run preview
 
 ---
 
-### UI / UX Notes
+### 🎨 UI / UX Notes
 
 - Light theme with:
   - Off‑white gradient background
@@ -295,7 +295,7 @@ npm run preview
 
 ---
 
-### Known Limitations / Notes
+### ⚠️ Known Limitations / Notes
 
 - Authentication uses plain‑text passwords for simplicity; do not use in production.
 - There is no multi‑tenant or advanced permission system; roles are basic.
@@ -304,10 +304,9 @@ npm run preview
 
 ---
 
-### Next Ideas
+### 🚀 Next Ideas
 
 - Add proper password hashing and session/token authentication
 - Enhance analytics with charts (e.g., using a small charting library)
 - Add pagination and filtering for large fleets
 - Add audit logs for dispatch and maintenance actions
-

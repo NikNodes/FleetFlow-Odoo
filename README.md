@@ -1,2 +1,0 @@
-# FleetFlow-Odoo
-Hardik Patel

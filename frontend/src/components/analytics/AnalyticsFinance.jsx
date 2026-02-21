@@ -11,10 +11,13 @@ export function AnalyticsFinance() {
   async function handleSubmit(e) {
     e.preventDefault()
     if (!vehicleId || !fuelLiters || !fuelCost) return
+    const litersNum = Number(fuelLiters)
+    const costNum = Number(fuelCost)
+    if (isNaN(litersNum) || litersNum < 0 || isNaN(costNum) || costNum < 0) return
     addExpense({
       vehicleId,
-      fuelLiters: Number(fuelLiters),
-      fuelCost: Number(fuelCost),
+      fuelLiters: litersNum,
+      fuelCost: costNum,
     })
     setVehicleId('')
     setFuelLiters('')

@@ -91,13 +91,24 @@ function AddVehicleModal({ onClose }) {
   async function handleSubmit(e) {
     e.preventDefault()
     if (!plate || !model || !maxLoad || !odometer || !acquisitionCost) return
+    const maxNum = Number(maxLoad)
+    const odoNum = Number(odometer)
+    const costNum = Number(acquisitionCost)
+    if (
+      isNaN(maxNum) || maxNum <= 0 ||
+      isNaN(odoNum) || odoNum < 0 ||
+      isNaN(costNum) || costNum < 0
+    ) {
+      // simple client-side guard; server will also check
+      return
+    }
     setSaving(true)
     addVehicle({
       plate,
       model,
-      maxLoad: Number(maxLoad),
-      odometer: Number(odometer),
-      acquisitionCost: Number(acquisitionCost),
+      maxLoad: maxNum,
+      odometer: odoNum,
+      acquisitionCost: costNum,
     })
     setSaving(false)
     onClose()

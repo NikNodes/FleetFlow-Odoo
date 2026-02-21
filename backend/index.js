@@ -10,7 +10,7 @@ const port = process.env.PORT || 4000
 
 const {
   DB_HOST = 'localhost',
-  DB_PORT = 3306,
+  DB_PORT = '3306',
   DB_USER = 'root',
   DB_PASSWORD = '',
   DB_NAME = 'fleetflow',
@@ -18,7 +18,7 @@ const {
 
 const pool = mysql.createPool({
   host: DB_HOST,
-  port: DB_PORT,
+  port: parseInt(DB_PORT, 10) || 3306,
   user: DB_USER,
   password: DB_PASSWORD,
   database: DB_NAME,
@@ -194,8 +194,17 @@ app.get('/api/state', async (req, res) => {
 
 app.post('/api/auth/register', async (req, res) => {
   const { name, email, password, role } = req.body || {}
+  const validRoles = [
+    'Fleet Manager',
+    'Dispatcher',
+    'Safety Officer',
+    'Financial Analyst',
+  ]
   if (!name || !email || !password || !role) {
     return res.status(400).json({ error: 'All fields are required.' })
+  }
+  if (!validRoles.includes(role)) {
+    return res.status(400).json({ error: 'Invalid role.' })
   }
   try {
     const [rows] = await pool.query('SELECT id FROM users WHERE email = ?', [
@@ -214,6 +223,7 @@ app.post('/api/auth/register', async (req, res) => {
     )
     res.json({ id, name, email: email.toLowerCase(), role })
   } catch (err) {
+    console.error('registration error:', err)
     res.status(500).json({ error: 'Registration failed.' })
   }
 })
@@ -243,6 +253,16 @@ app.post('/api/vehicles', async (req, res) => {
   if (!plate || !model || !maxLoad || !odometer || !acquisitionCost) {
     return res.status(400).json({ error: 'All fields are required.' })
   }
+  if (
+    typeof maxLoad !== 'number' ||
+    maxLoad <= 0 ||
+    typeof odometer !== 'number' ||
+    odometer < 0 ||
+    typeof acquisitionCost !== 'number' ||
+    acquisitionCost < 0
+  ) {
+    return res.status(400).json({ error: 'Numeric values must be valid.' })
+  }
   try {
     const id = `v${Date.now()}`
     await pool.query(
@@ -255,6 +275,7 @@ app.post('/api/vehicles', async (req, res) => {
     const state = await getState()
     res.json(state)
   } catch (err) {
+    console.error('add vehicle error:', err)
     res.status(500).json({ error: 'Failed to add vehicle.' })
   }
 })
@@ -282,6 +303,19 @@ app.post('/api/vehicles/:id/toggle-shop', async (req, res) => {
 
 app.post('/api/trips', async (req, res) => {
   const { vehicleId, driverId, cargoWeight, revenue } = req.body || {}
+  // basic presence/format validation
+  if (!vehicleId || !driverId) {
+    return res.status(400).json({ error: 'Select vehicle and driver.' })
+  }
+  if (
+    typeof cargoWeight !== 'number' ||
+    cargoWeight <= 0 ||
+    typeof revenue !== 'number' ||
+    revenue < 0
+  ) {
+    return res.status(400).json({ error: 'Invalid cargo weight or revenue.' })
+  }
+
   try {
     const [[vehicle]] = await pool.query('SELECT * FROM vehicles WHERE id = ?', [
       vehicleId,
@@ -297,6 +331,9 @@ app.post('/api/trips', async (req, res) => {
     }
     if (driver.licenseStatus === 'Expired') {
       return res.status(400).json({ error: 'Driver license expired.' })
+    }
+    if (driver.status !== 'Available') {
+      return res.status(400).json({ error: 'Driver not available.' })
     }
     if (vehicle.status !== 'Available') {
       return res.status(400).json({ error: 'Selected vehicle is not available.' })
@@ -324,6 +361,7 @@ app.post('/api/trips', async (req, res) => {
     const state = await getState()
     res.json(state)
   } catch (err) {
+    console.error('trip create error:', err)
     res.status(500).json({ error: 'Failed to create trip.' })
   }
 })
@@ -334,6 +372,9 @@ app.post('/api/trips/:id/complete', async (req, res) => {
     const [[trip]] = await pool.query('SELECT * FROM trips WHERE id = ?', [id])
     if (!trip) {
       return res.status(404).json({ error: 'Trip not found.' })
+    }
+    if (trip.status !== 'Dispatched') {
+      return res.status(400).json({ error: 'Trip is not in dispatch state.' })
     }
     await pool.query('UPDATE trips SET status = ? WHERE id = ?', ['Completed', id])
 
@@ -354,6 +395,7 @@ app.post('/api/trips/:id/complete', async (req, res) => {
     const state = await getState()
     res.json(state)
   } catch (err) {
+    console.error('complete trip error:', err)
     res.status(500).json({ error: 'Failed to complete trip.' })
   }
 })
@@ -362,6 +404,9 @@ app.post('/api/maintenances', async (req, res) => {
   const { vehicleId, description, cost, date } = req.body || {}
   if (!vehicleId || !description || !cost) {
     return res.status(400).json({ error: 'Vehicle, description, and cost required.' })
+  }
+  if (typeof cost !== 'number' || cost < 0) {
+    return res.status(400).json({ error: 'Cost must be a non‑negative number.' })
   }
   try {
     const id = `m${Date.now()}`
@@ -386,6 +431,7 @@ app.post('/api/maintenances', async (req, res) => {
     const state = await getState()
     res.json(state)
   } catch (err) {
+    console.error('add maintenance error:', err)
     res.status(500).json({ error: 'Failed to add maintenance log.' })
   }
 })
@@ -394,6 +440,14 @@ app.post('/api/expenses', async (req, res) => {
   const { vehicleId, fuelLiters, fuelCost } = req.body || {}
   if (!vehicleId || !fuelLiters || !fuelCost) {
     return res.status(400).json({ error: 'Vehicle, liters, and cost required.' })
+  }
+  if (
+    typeof fuelLiters !== 'number' ||
+    fuelLiters < 0 ||
+    typeof fuelCost !== 'number' ||
+    fuelCost < 0
+  ) {
+    return res.status(400).json({ error: 'Quantities must be non‑negative numbers.' })
   }
   try {
     const id = `x${Date.now()}`
@@ -407,6 +461,7 @@ app.post('/api/expenses', async (req, res) => {
     const state = await getState()
     res.json(state)
   } catch (err) {
+    console.error('add expense error:', err)
     res.status(500).json({ error: 'Failed to add expense.' })
   }
 })

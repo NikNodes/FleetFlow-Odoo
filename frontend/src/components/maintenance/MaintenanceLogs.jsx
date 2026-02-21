@@ -12,10 +12,12 @@ export function MaintenanceLogs() {
   async function handleSubmit(e) {
     e.preventDefault()
     if (!vehicleId || !description || !cost) return
+    const costNum = Number(cost)
+    if (isNaN(costNum) || costNum < 0) return
     addMaintenance({
       vehicleId,
       description,
-      cost: Number(cost),
+      cost: costNum,
       date: date || undefined,
     })
     setVehicleId('')

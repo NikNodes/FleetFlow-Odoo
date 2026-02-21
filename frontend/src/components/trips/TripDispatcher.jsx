@@ -22,11 +22,17 @@ export function TripDispatcher() {
       setError('Fill in all fields.')
       return
     }
+    const cargoNum = Number(cargoWeight)
+    const revenueNum = Number(revenue)
+    if (isNaN(cargoNum) || cargoNum <= 0 || isNaN(revenueNum) || revenueNum < 0) {
+      setError('Cargo weight and revenue must be valid numbers.')
+      return
+    }
     const result = await createTrip({
       vehicleId,
       driverId,
-      cargoWeight: Number(cargoWeight),
-      revenue: Number(revenue),
+      cargoWeight: cargoNum,
+      revenue: revenueNum,
     })
     if (!result.ok) {
       setError(result.error || 'Unable to create trip.')
